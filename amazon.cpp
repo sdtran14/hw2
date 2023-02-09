@@ -3,11 +3,16 @@
 #include <set>
 #include <sstream>
 #include <vector>
+#include <queue>
 #include <iomanip>
 #include <algorithm>
 #include "product.h"
+#include "book.h"
+#include "movie.h"
+#include "clothing.h"
 #include "db_parser.h"
 #include "product_parser.h"
+#include "mydatastore.h"
 #include "util.h"
 
 using namespace std;
@@ -29,7 +34,7 @@ int main(int argc, char* argv[])
      * Declare your derived DataStore object here replacing
      *  DataStore type to your derived type
      ****************/
-    DataStore ds;
+    MyDataStore ds;
 
 
 
@@ -50,7 +55,7 @@ int main(int argc, char* argv[])
         cerr << "Error parsing!" << endl;
         return 1;
     }
-
+		//ds.printMap();
     cout << "=====================================" << endl;
     cout << "Menu: " << endl;
     cout << "  AND term term ...                  " << endl;
@@ -99,20 +104,68 @@ int main(int argc, char* argv[])
                 }
                 done = true;
             }
-	    /* Add support for other commands here */
+						else if(cmd == "ADD") /* Add support for other commands here */
+						{
+								string username;
+								int s = 0;
+								if(ss>>username>>s) 
+								{
+									if(s<1 || s>(signed)hits.size() || ds.uset.find(username) == ds.uset.end()) cout << "Invalid request" << endl;
+									else ds.addCart(username, hits[s-1]);
+								} else cout << "Invalid request" << endl;
+									
+								
+						}
+						else if(cmd == "VIEWCART") 
+						{
+							string username;
+							if(ss>>username) 
+							{
+								if(ds.uset.find(username) == ds.uset.end())  
+								{
+									cout<< "Invalid username" << endl;
+								} else {
+								queue<Product*> copyq = ds.carts[ds.uset[username]];
+								int i = 0;
+								//cout<<"showing"<<endl;
+								//ds.viewCart(username);
+								
+								while(!copyq.empty()) 
+								{
+									//cout<<++i<<": "<<copyq.front()<<endl;
+									cout<<"Item "<<++i<<endl;
+									cout<<copyq.front()->displayString()<<endl;
+									
+									copyq.pop();
 
-
-
-
+								}
+								}
+							} else cout<< "Invalid username" << endl;
+						}
+						else if(cmd == "BUYCART") 
+						{
+							string username;
+							if(ss>>username) 
+							{
+								if(ds.uset.find(username) == ds.uset.end())  
+								{
+									cout<< "Invalid username" << endl;
+								} else {
+								ds.buyCart(username);
+								}
+							} else cout<< "Invalid username" << endl;
+						}
             else {
                 cout << "Unknown command" << endl;
             }
-        }
+        
 
-    }
-    return 0;
+    
+    
+		}
 }
-
+return 0;
+}
 void displayProducts(vector<Product*>& hits)
 {
     int resultNo = 1;

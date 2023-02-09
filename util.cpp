@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cctype>
 #include <algorithm>
+#include <string>
 #include "util.h"
 
 using namespace std;
@@ -15,7 +16,31 @@ std::string convToLower(std::string src)
     to a set of words based on the criteria given in the assignment **/
 std::set<std::string> parseStringToWords(string rawWords)
 {
+    set<string> s;
+    int start = 0;
+    for(int i = 0; i<(signed)rawWords.size(); i++) 
+    {
+        char curr = rawWords[i];
+        if(!isalpha(curr) && !isdigit(curr)) 
+        {
+            int len = i-start;
+            if(len > 1) 
+            {
+                s.insert(convToLower(rawWords.substr(start, len)));
+								//cout<<start<<","<<len<<": "<<rawWords<<", "<<rawWords.substr(start, len)<<endl;
+            }
+            start = i+1;
+        }
+				//Carrano and Henry
+				
+    }
+		int len = (signed)rawWords.size() - start;
+            if(len > 1) 
+            {
+                s.insert(convToLower(rawWords.substr(start, len)));
+            }
 
+    return s;
 
 
 
